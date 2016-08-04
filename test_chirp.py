@@ -6,10 +6,14 @@ class Test_Chirp(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        self.chirp = Chirp(1234, "this is a chirp", 4321, True, None)
+        self.chirp = Chirp(1234,
+                            "this is a chirp",
+                            4321,
+                            True,
+                            None)
 
-    def test_chirp_exists(self):
-        self.assertTrue(self.chirp)
+    def test_self_chirp_is_a_chirp(self):
+        self.assertIsInstance(self.chirp, Chirp)
 
     def test_chirp_author_value(self):
         self.assertIsInstance(self.chirp.author, int)
