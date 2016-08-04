@@ -1,48 +1,17 @@
+import uuid
+import pickle
+import serialization
+from chirp import *
+from user import *
+from conversation import *
+
 class Birdyboard:
 
-    pass
-
-    def new_user(self):
-
-        print('Enter Full Name')
-
-        print('Enter Username')
-
-        print('Enter Password')
-
-    def select_user(self):
-
-        pass
-
-    def sign_in(self):
-
-        pass
-
-    def create_public_chirp(self):
-
-        pass
-
-    def create_private_chrip(self):
-
-        pass
-
-    def view_chirps(self):
-
-        pass
-
-        def public_chirps(self):
-
-            pass
-
-        def private_chirps(self):
-
-            pass
-
-    def show_menu(self):
+    def initial_menu(self):
 
         print('1.) New User')
 
-        print('2.) Sign In')
+        print('2.) Select User')
 
         print('3.) New Public Chirp')
 
@@ -58,13 +27,18 @@ class Birdyboard:
 
             if selection == '1':
 
-                self.new_user()
+                print('Enter Full Name')
+                fullname = input('fullname >  ')
+                print('Enter Username')
+                username = input('username >  ')
+
 
             if selection == '2':
 
-                sign_in()
+                select_user()
 
             if selection == '3':
+
 
                 create_public_chirps()
 
@@ -78,4 +52,4 @@ class Birdyboard:
 
 if __name__ == '__main__':
     birdyboard = Birdyboard()
-    birdyboard.show_menu()
+    birdyboard.initial_menu()
