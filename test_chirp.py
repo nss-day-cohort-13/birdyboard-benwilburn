@@ -8,9 +8,8 @@ class Test_Chirp(unittest.TestCase):
     def setUpClass(self):
         self.chirp = Chirp(1234,
                             "this is a chirp",
-                            4321,
                             True,
-                            None)
+                            4321)
 
     def test_self_chirp_is_a_chirp(self):
         self.assertIsInstance(self.chirp, Chirp)
@@ -20,15 +19,19 @@ class Test_Chirp(unittest.TestCase):
         self.assertEqual(self.chirp.author, 1234)
 
     def test_chirp_message_value(self):
-        self.assertIsInstance(self.chirp.message, str)
-        self.assertEqual(self.chirp.message, 'this is a chirp')
+        self.assertIsInstance(self.chirp.chirp_message, str)
+        self.assertEqual(self.chirp.chirp_message, 'this is a chirp')
 
     def test_chirp_private_value(self):
         self.assertIsInstance(self.chirp.private, bool)
         self.assertEqual(self.chirp.private, True)
 
     def test_chirp_target_value(self):
-        self.assertEqual(self.chirp.target, None)
+        self.assertEqual(self.chirp.recipient, 4321)
+
+    def test_chirp_id_type(self):
+        self.assertEqual(type(self.chirp.message_id), uuid.UUID)
+
 
 if __name__ == "__main__":
     unittest.main()

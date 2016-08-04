@@ -1,9 +1,16 @@
+import uuid
+from user import *
+from conversation import *
 class Chirp:
 
     def __init__(self,
                 user_id,
                 message,
-                target_id,
-                private=False,
+                is_private=False,
                 target=None):
-        pass
+        self.author = user_id
+        self.chirp_message = message
+        self.private = is_private
+        self.recipient = target
+        self.message_id = uuid.uuid4()
+        Conversation(self.message_id)

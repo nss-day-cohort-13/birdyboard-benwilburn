@@ -15,4 +15,7 @@ class Test_Conversation(unittest.TestCase):
         self.assertEqual(self.conversation.chirp_id, 1234)
 
     def test_chirp_id_type(self):
-        self.assetEqual(type(self.conversation.conversation_id), uuid.UUID)
+        self.assertEqual(type(self.conversation.conversation_id), uuid.UUID)
+
+if __name__ == "__main__":
+    unittest.main()
