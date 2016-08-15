@@ -12,5 +12,4 @@ class Chirp:
         self.chirp_message = message
         self.private = is_private
         self.recipient = target
-        self.message_id = uuid.uuid4()
-        Conversation(self.message_id)
+        self.obj_id = uuid.uuid4().int

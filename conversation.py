@@ -4,4 +4,4 @@ class Conversation:
 
     def __init__(self, message_id):
         self.chirp_id = message_id
-        self.conversation_id = uuid.uuid4()
+        self.obj_id = uuid.uuid4().int
