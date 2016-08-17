@@ -57,17 +57,21 @@ def show_menu():
             selection = input('public chirp? (y/n) > ')
             if selection == 'y' or selection == 'Y' or selection == 'yes' or selection == 'Yes':
                 new_public_chirp = create_public_chirp()
-                if new_public_chirp.obj_id in public_chirps_directory:
-                    pass
-                else:
-                    generate_new_thread(new_public_chirp.obj_id)
+                if new_public_chirp.obj_id not in public_chirps_directory:
+                    try:
+                        generate_new_thread(new_public_chirp.obj_id, False)
+                    except TypeError:
+                        print(error)
+
+                view_all_public_chirps()
             if selection == 'n' or selection == 'N' or selection == 'no' or selection == 'No':
                 new_private_chirp = create_private_chirp()
                 if new_private_chirp.obj_id not in private_chirps_directory:
-                    pass
-                else:
-                    generate_new_thread(new_private_chirp.obj_id)
-            view_all_chirps()
+                    try:
+                        generate_new_thread(new_private_chirp.obj_id, True)
+                    except TypeError:
+                        print(error)
+                view_all_private_chirps()
 
         if selection == '4':
             print('1. View Public Chirps')
@@ -98,7 +102,7 @@ def create_public_chirp():
     global public_chirps_directory
 
     message = input('Wat r u chirping? > ')
-    new_chirpy = Chirp(current_user.obj_id, message, False)
+    new_chirpy = Chirp(current_user.obj_id, message)
     public_chirps_directory[new_chirpy.obj_id] = new_chirpy
     serialization.serialize('public_chirps.txt', public_chirps_directory)
     return new_chirpy
@@ -111,25 +115,45 @@ def create_private_chirp():
 
     message = input('Wat r u chirping? > ')
     recipient = select_user()
-    new_chirpy = Chirp(current_user.obj_id, message, True, recipient.obj_id)
+    new_chirpy = Chirp(current_user.obj_id, message, recipient.obj_id)
     private_chirps_directory[new_chirpy.obj_id] = new_chirpy
     serialization.serialize('private_chirps.txt', private_chirps_directory)
+    return new_chirpy
 
 def view_all_public_chirps():
+    global public_chirps_directory
+    global conversations_directory
+
     print('All Public Chirps: ')
     public_chirps = list(public_chirps_directory.values())
-    # print('public_chirps', public_chirps)
+    public_chirps_length = str(len(public_chirps) + 1)
     [print(str(index + 1) + '. ' + value.chirp_message) for index, value in enumerate(public_chirps)]
+    print(public_chirps_length + '. Exit')
+    reply = input('chirp back? (enter number) > ')
+    if reply < str(public_chirps_length):
+        target = public_chirps[(int(reply) - 1)].obj_id
+        for item in conversations_directory.keys():
+            print('hey')
+            print(item)
+    else:
+        show_menu()
 
-def view_all_public_chirps():
+def view_all_private_chirps():
+    global private_chirps_directory
+    global conversations_directory
+
     print('All Private Chirps: ')
     private_chirps = list(private_chirps_directory.values())
     [print(str(index + 1) + '. ' + value.chirp_message) for index, value in enumerate(private_chirps)]
 
-def generate_new_thread(chirp_id):
-    new_convo = Conversation(chirp_id)
-    conversation_directory[new_convo.obj_id] = new_convo
+def generate_new_thread(chirp_id, private):
+    global conversations_directory
+
+    new_convo = Conversation(chirp_id, private)
+    conversations_directory[new_convo.obj_id] = new_convo
     serialization.serialize('conversations.txt', conversation_directory)
+
+d
 
 if __name__ == '__main__':
     show_menu()

@@ -22,10 +22,6 @@ class Test_Chirp(unittest.TestCase):
         self.assertIsInstance(self.chirp.chirp_message, str)
         self.assertEqual(self.chirp.chirp_message, 'this is a chirp')
 
-    def test_chirp_private_value(self):
-        self.assertIsInstance(self.chirp.private, bool)
-        self.assertEqual(self.chirp.private, True)
-
     def test_chirp_target_value(self):
         self.assertEqual(self.chirp.recipient, 4321)
 

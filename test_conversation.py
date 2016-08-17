@@ -11,6 +11,10 @@ class Test_Conversation(unittest.TestCase):
     def test_self_conversation_is_a_conversation(self):
         self.assertIsInstance(self.conversation, Conversation)
 
+    def test_conversation_private_value(self):
+        self.assertIsInstance(self.conversation.private, bool)
+        self.assertEqual(self.conversation.private, True)
+
     def test_chirp_id_value(self):
         self.assertEqual(self.conversation.chirp_id, 1234)
 
