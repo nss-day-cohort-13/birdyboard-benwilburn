@@ -247,7 +247,7 @@ def show_public_chirps_to_current_user():
     if selection < public_chirps_length and selection > 0:
 
         targetId = public_chirps[(int(selection) - 1)].obj_id
-        conversation = get_reply_chirps(targetId)
+        conversation = get_public_reply_chirps(targetId)
         to_reply = input('do you want to reply(y/n) > ')
 
         if to_reply.lower()[0] == 'y':
@@ -265,68 +265,7 @@ def show_public_chirps_to_current_user():
 
         run_view_all_chirps()
 
-def make_user_sign_in():
-    print('1. Create User')
-    print('\n2. Select User')
-    print('\n3. Exit')
-    selection = input('what do you want to do? (enter number) > ')
-
-    if selection == '1':
-
-        run_create_user()
-
-    if selection == '2':
-
-        run_select_user()
-
-    if selection == '3':
-
-        show_menu()
-
-#############################################################################
-######################## 5. Private Chirp  Mehtods ##########################
-#############################################################################
-
-def create_private_chirp():
-    global current_user
-
-    message = input('Wat r u chirping? > ')
-
-    # selects who current user wants to chirp to
-    recipient = select_user()
-
-    # creates new instance of private chirp with current user and recipient id and message
-    new_chirpy = Chirp(current_user.obj_id, message, recipient.obj_id)
-
-    return new_chirpy
-
-def view_all_private_chirps():
-    global private_chirps_directory
-
-    # creates a list of all chirp objects in private chirps directory
-    private_chirps = list(private_chirps_directory.values())
-
-    # get the number of chirp objects in private chirps directory ## for exit menu option
-    private_chirps_length = len(private_chirps) + 1
-
-    # prints all private chirp messages from chirp objects in private chirps directory
-    print('All Private Chirps: ')
-    [print(str(index + 1) + '. ' + value.chirp_message) for index, value in enumerate(private_chirps)]
-    print(str(private_chirps_length) + '. Exit')
-
-    return private_chirps_length
-
-def no_user_reroute():
-
-    input('Must be logged in to see private chirps')
-    show_menu()
-
-
-#############################################################################
-############################# 6. General Methods ############################
-#############################################################################
-
-def get_reply_chirps(targetId):
+def get_public_reply_chirps(targetId):
     global conversations_directory
     global public_chirps_directory
     global user_directory
@@ -360,6 +299,132 @@ def get_reply_chirps(targetId):
 
         # return the matched converation
         return conversation
+
+def make_user_sign_in():
+    print('1. Create User')
+    print('\n2. Select User')
+    print('\n3. Exit')
+    selection = input('what do you want to do? (enter number) > ')
+
+    if selection == '1':
+
+        run_create_user()
+
+    if selection == '2':
+
+        run_select_user()
+
+    if selection == '3':
+
+        show_menu()
+
+#############################################################################
+######################## 5. Private Chirp  Methods ##########################
+#############################################################################
+
+def create_private_chirp():
+    global current_user
+
+    message = input('Wat r u chirping? > ')
+
+    # selects who current user wants to chirp to
+    recipient = choose_target()
+
+    # creates new instance of private chirp with current user and recipient id and message
+    new_chirpy = Chirp(current_user.obj_id, message, recipient.obj_id)
+
+    return new_chirpy
+
+def view_all_private_chirps():
+    global private_chirps_directory
+
+    # creates a list of all chirp objects in private chirps directory
+    private_chirps = list(private_chirps_directory.values())
+
+    # get the number of chirp objects in private chirps directory ## for exit menu option
+    private_chirps_length = len(private_chirps) + 1
+
+    # prints all private chirp messages from chirp objects in private chirps directory
+    print('All Private Chirps: ')
+    [print(str(index + 1) + '. ' + value.chirp_message) for index, value in enumerate(private_chirps)]
+    print(str(private_chirps_length) + '. Exit')
+
+    return private_chirps_length
+
+def no_user_reroute():
+
+    input('Must be logged in to see private chirps')
+    show_menu()
+
+def show_private_chirps_to_current_user():
+        global private_chirps_directory
+        global conversations_directory
+
+        private_chirps = list(private_chirps_directory.values())
+        private_chirps_length = view_all_private_chirps()
+        selection = int(input('chirp back? (enter number) > '))
+
+        if selection < private_chirps_length and selection > 0:
+
+            targetId = private_chirps[(int(selection) - 1)].obj_id
+            conversation = get_private_reply_chirps(targetId)
+            to_reply = input('do you want to reply(y/n) > ')
+
+            if to_reply.lower()[0] == 'y':
+
+                reply_chirp = create_public_chirp()
+                conversation.append({reply_chirp.obj_id: reply_chirp})
+                serialize_data(conversations_directory, 'conversations.txt')
+                run_view_all_chirps()
+
+            else:
+
+                run_view_all_chirps()
+
+        else:
+
+            run_view_all_chirps()
+
+def get_private_reply_chirps(targetId):
+    global conversations_directory
+    global private_chirps_directory
+    global user_directory
+    global current_user
+
+    conversation = None
+    # find conversation that contains the target chrip
+    for conversation_id, conversation_data in conversations_directory.items():
+
+        # checks to see if chirp user selected is in the conversations directory
+        if targetId == conversation_data.chirp_id:
+            for chirps in private_chirps_directory.values():
+                if chirps.author == current_user.obj_id or chirps.recipient == current_user.obj_id:
+                    # sets conversation to be list of replies in the conversation object
+                    conversation = conversation_data.replies
+
+                    get_original_selected_chirp(targetId)
+
+
+
+        # print replies if available
+        if not conversation or len(conversation) == 0:
+            print('No chirps')
+
+        else:
+            print('\nreplies:')
+
+            # checks all replys within the conversation object reply list
+            for reply in conversation:
+
+                # prints all messages in conversation object reply list
+                for data in reply.values():
+                    print('\n ' + data.chirp_message)
+
+        # return the matched converation
+        return conversation
+#############################################################################
+############################# 6. General Methods ############################
+#############################################################################
 
 def get_original_selected_chirp(targetId):
     # finds target chirp and displays it
@@ -434,6 +499,12 @@ def print_users():
     print(str(stored_users_length) + '. Exit')
 
     return stored_users
+
+def choose_target():
+
+    stored_users_list = print_users()
+    user = select_user(stored_users_list)
+    return user
 
 #############################################################################
 ########################## 8. Conversation Method ###########################
