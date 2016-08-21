@@ -11,3 +11,6 @@ class Chirp:
         self.chirp_message = message
         self.recipient = target
         self.obj_id = uuid.uuid4().int
+
+    def __str__(self):
+        return self.chirp_message
