@@ -24,6 +24,7 @@ from conversation import *
 ############################# 1.Global Values ###############################
 #############################################################################
 
+# all directorys = dictionary
 user_directory = serialization.deserialize('users.txt')
 public_chirps_directory = serialization.deserialize('public_chirps.txt')
 private_chirps_directory = serialization.deserialize('private_chirps.txt')
@@ -79,7 +80,7 @@ def runner(selection):
 
     if selection == '3':
 
-        run_create_new_chirp()
+        run_chirp_creator()
 
     if selection == '4':
 
@@ -89,18 +90,26 @@ def runner(selection):
 def run_create_user():
     global current_user
 
+    # sets created user to variable
     user = create_new_user()
+
+    # sets current_user to user object just created
     current_user = user
+
     show_menu()
 
 def run_select_user():
     global current_user
 
+    # puts all users in a list
     stored_users_list = print_users()
+
+    # sets current user to input selected user object
     current_user = select_user(stored_users_list)
+
     show_menu()
 
-def run_create_new_chirp():
+def run_chirp_creator():
     global public_chirps_directory
     global private_chirps_directory
     global conversations_directory
@@ -109,42 +118,18 @@ def run_create_new_chirp():
 
     if decision.lower()[0] == 'y':
 
-        new_public_chirp = create_public_chirp()
-        serialize_data(public_chirps_directory, 'public_chirps.txt', new_public_chirp)
-
-        if new_public_chirp.obj_id not in conversations_directory:
-
-            try:
-
-                generate_new_thread(new_public_chirp.obj_id, False)
-
-            except TypeError:
-
-                print(error)
-
-        show_menu()
+        run_create_public_chirp()
 
     if decision.lower()[0] == 'n':
 
-        new_private_chirp = create_private_chirp()
-        serialize_data(private_chirps_directory, 'private_chirps.txt', new_private_chirp)
-        if new_private_chirp.obj_id not in private_chirps_directory:
-
-            try:
-
-                generate_new_thread(new_private_chirp.obj_id, True)
-
-            except TypeError:
-
-                print(error)
-
-        show_menu()
+        run_create_private_chirp()
 
 def run_view_all_chirps():
     global public_chirps_directory
     global private_chirps_directory
     global conversations_directory
 
+    # prints sub menu for viewing all chirps
     print('1. View Public Chirps')
     print('2. View Private Chirps')
     print('3. Exit')
@@ -171,8 +156,49 @@ def run_view_all_chirps():
 
         show_menu()
 
+def run_create_public_chirp():
+    # creates new instance of a public chirp and assigns it to a variable
+    new_public_chirp = create_public_chirp()
+
+    # creates new public chirp object in public chirps directory and serializes it
+    serialize_data(public_chirps_directory, 'public_chirps.txt', new_public_chirp)
+
+    # if new_public_chirp isn't in conversations directory, it creates new conversation
+    if new_public_chirp.obj_id not in conversations_directory:
+
+        try:
+
+            generate_new_thread(new_public_chirp.obj_id, False)
+
+        except TypeError:
+
+            print(error)
+
+    show_menu()
+
+def run_create_private_chirp():
+    # creates new instance of a private chirp and assigns it to a variable
+    new_private_chirp = create_private_chirp()
+
+    # creates new private chirp object in private chirps directory and serializes it
+    serialize_data(private_chirps_directory, 'private_chirps.txt', new_private_chirp)
+
+    # if new_private_chirp isn't in conversations directory, it creates new conversation
+    if new_private_chirp.obj_id not in conversations_directory:
+
+        try:
+
+            generate_new_thread(new_private_chirp.obj_id, True)
+
+        except TypeError:
+
+            print(error)
+
+    show_menu()
+
+
 #############################################################################
-######################### 4. Public Chirp Mehtods ###########################
+######################### 4. Public Chirp Methods ###########################
 #############################################################################
 
 def create_public_chirp():
@@ -235,9 +261,9 @@ def show_public_chirps_to_current_user():
 
             run_view_all_chirps()
 
-        else:
+    else:
 
-            run_view_all_chirps()
+        run_view_all_chirps()
 
 def make_user_sign_in():
     print('1. Create User')
@@ -286,6 +312,9 @@ def view_all_private_chirps():
     # prints all private chirp messages from chirp objects in private chirps directory
     print('All Private Chirps: ')
     [print(str(index + 1) + '. ' + value.chirp_message) for index, value in enumerate(private_chirps)]
+    print(str(private_chirps_length) + '. Exit')
+
+    return private_chirps_length
 
 def no_user_reroute():
 
